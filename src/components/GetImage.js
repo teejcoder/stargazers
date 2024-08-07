@@ -4,7 +4,6 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const NASA_API = process.env.REACT_APP_NASA_API;
 
-
 function getRandomImage(){
 
 }
@@ -32,15 +31,14 @@ function GetImage() {
 
   return (
     <div className="">
-      <div className="border mb-10">
+      <div className="border h-20 flex items-center justify-center mb-10">
         <h1>Aus Stargazers</h1>
       </div>
-      {
-        !pictureOfTheDay ? 
-        <h2>Please choose a date</h2>
-        : <span></span>
-      }
-
+        {
+          !pictureOfTheDay ? 
+          <h2>Date?</h2>
+          : <span></span>
+        }
       <div>
         <DatePicker
           showIcon
@@ -51,19 +49,26 @@ function GetImage() {
         />
         </div>
         <div className="mb-10">
+        {
+        !pictureOfTheDay ? 
         <span className="text-xs italic">Date must be after 1995-06-16, the first day an APOD picture was posted.</span>
+        : <span></span>
+      }
       </div>
 
       {pictureOfTheDay && (
-        <div className="">
-          <img src={pictureOfTheDay.url} className="block max-width-screen mb-10" alt={pictureOfTheDay.title} />
           <div className="">
-            <h2>{pictureOfTheDay.title}</h2>
-            <p>{pictureOfTheDay.explanation}</p>
+            {pictureOfTheDay.media_type === "image" ? (
+              <img src={pictureOfTheDay.hdurl ? (pictureOfTheDay.hdurl) : (pictureOfTheDay.url)} className="block max-width-screen mb-10" alt={pictureOfTheDay.title} /> 
+            ) : (
+              <iframe src={pictureOfTheDay.url} className="block max-width-screen mb-10" alt={pictureOfTheDay.title} />
+            )}
+            <div className="">
+              <h2 className="mb-6">{pictureOfTheDay.title}</h2>
+              <p>{pictureOfTheDay.explanation}</p>
+            </div>
           </div>
-        </div>
-      )}
-
+        )}
     </div>
   );
 }
