@@ -61,7 +61,7 @@ function GetImage() {
             {pictureOfTheDay.media_type === "image" ? (
               <img src={pictureOfTheDay.hdurl ? (pictureOfTheDay.hdurl) : (pictureOfTheDay.url)} className="block max-width-screen mb-10" alt={pictureOfTheDay.title} /> 
             ) : (
-              <iframe src={pictureOfTheDay.url} className="block max-width-screen mb-10" alt={pictureOfTheDay.title} />
+              <iframe src={pictureOfTheDay.url} title="iframe element" className="block max-width-screen mb-10" alt={pictureOfTheDay.title} />
             )}
             <div className="">
               <h2 className="mb-6">{pictureOfTheDay.title}</h2>
