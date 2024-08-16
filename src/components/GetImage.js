@@ -8,19 +8,16 @@ const NASA_API = process.env.REACT_APP_NASA_API;
 function GetImage() {
   const [pictureOfTheDay, setPictureOfTheDay] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getPicture = async () => {
       if (!selectedDate) return; 
       const formattedDate = selectedDate.toISOString().split('T')[0];
-      setLoading(true);
       try {
         const response = await fetch(`https://api.nasa.gov/planetary/apod?date=${formattedDate}&api_key=${NASA_API}`);
         const data = await response.json();
         console.log(data)
         setPictureOfTheDay(data);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching picture of the day:', error);
       }
