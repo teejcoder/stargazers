@@ -31,12 +31,13 @@ function GetImage() {
 
   return (
     <div className="">
-      <div className="h-20 flex items-center justify-center mb-10">
+      <div className="h-20 flex items-center justify-between mb-10">
         <h1 className="text-4xl">Aus Stargazers</h1>
+        <a href="https://github.com/teejcoder" target="_" className="hover:underline">Github</a>
       </div>
       <Particles
         quantity={500}
-        className="absolute w-full h-full -z-10"
+        className="absolute top-0 left-0 w-full h-full -z-10"
       />
         {
           !pictureOfTheDay ? 
