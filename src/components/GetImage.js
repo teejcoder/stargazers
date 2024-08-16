@@ -36,7 +36,7 @@ function GetImage() {
       </div>
       <Particles
         quantity={500}
-        className="absolute top-0 left-0 w-full h-full -z-10"
+        className="absolute w-full h-full -z-10"
       />
         {
           !pictureOfTheDay ? 
