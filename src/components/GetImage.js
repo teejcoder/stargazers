@@ -1,46 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import Particles from "./ui/Particles";
-
-const NASA_API = process.env.REACT_APP_NASA_API;
+import { getNasaData } from "../api/getNasaData";
 
 function GetImage() {
   const [pictureOfTheDay, setPictureOfTheDay] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
-  useEffect(() => {
-    const getPicture = async () => {
-      if (!selectedDate) return; 
-      const formattedDate = selectedDate.toISOString().split('T')[0];
-      try {
-        const response = await fetch(`https://api.nasa.gov/planetary/apod?date=${formattedDate}&api_key=${NASA_API}`);
-        const data = await response.json();
-        console.log(data)
-        setPictureOfTheDay(data);
-      } catch (error) {
-        console.error('Error fetching picture of the day:', error);
-      }
-    };
-
-    getPicture();
-  }, [selectedDate]);
+  const fetchPicture = async () => {
+    try {
+      const data = await getNasaData(selectedDate);
+      setPictureOfTheDay(data);
+    } catch (error) {
+      console.error(`This error is in fetchPicture in GetImage.js component`, error);
+    }
+  }
 
   return (
-    <div className="">
-      <div className="h-20 flex items-center justify-between mb-10">
-        <h1 className="text-4xl">Aus Stargazers</h1>
-        <a href="https://github.com/teejcoder" target="_" className="hover:underline">Github</a>
-      </div>
-      <Particles
-        quantity={500}
-        className="absolute top-0 left-0 w-full h-full -z-10"
-      />
-        {
-          !pictureOfTheDay ? 
-          <h2>Date?</h2>
-          : <span></span>
-        }
+    <div className="container mx-auto">
       <div>
         <DatePicker
           showIcon
@@ -49,29 +27,36 @@ function GetImage() {
           onChange={(date) => setSelectedDate(date)}
           dateFormat="yyyy/MM/dd"
         />
-        </div>
-        <div className="mb-10">
+
+        <button 
+          onClick={fetchPicture}
+          className="h-10 ml-10 px-10 rounded-2xl bg-white text-black hover:bg-red-600"
+        >
+          Click to get pic
+        </button>
+
+      </div>
+      <div className="mb-10">
         {
-        !pictureOfTheDay ? 
-        <span className="text-xs italic">Date must be after 1995-06-16, the first day an APOD picture was posted.</span>
-        : <span></span>
-      }
+          !pictureOfTheDay ? 
+          <span className="text-xs italic">Date must be after 1995-06-16, the first day an APOD picture was posted.</span>
+          : <span></span>
+        }
       </div>
 
       {pictureOfTheDay && (
-          <div className="">
+        <div className="mx-auto flex items-center justify-center flex-col">
             {pictureOfTheDay.media_type === "image" ? (
-              <img src={pictureOfTheDay.hdurl ? (pictureOfTheDay.hdurl) : (pictureOfTheDay.url)} className="block max-width-full mb-10" alt={pictureOfTheDay.title} /> 
+              <img src={pictureOfTheDay.hdurl ? (pictureOfTheDay.hdurl) : (pictureOfTheDay.url)} className="w-3/4 border-2 border-white rounded-3xl max-w-full" alt={pictureOfTheDay.title} /> 
             ) : (
-              <iframe src={pictureOfTheDay.url} title="iframe element" className="block max-width-screen mb-10" alt={pictureOfTheDay.title} />
+              <iframe src={pictureOfTheDay.url} title="iframe element" className="max-w-full" alt={pictureOfTheDay.title} />
             )}
-            <div className="mb-20">
-              <h2 className="mb-10 text-xl">{pictureOfTheDay.title}</h2>
-              <p className="text-start">{pictureOfTheDay.explanation}</p>
-            </div>
-            
+          <div className="">
+            <h1 className="mb-10 text-3xl">{pictureOfTheDay.title}</h1>
+            <p className="text-start">{pictureOfTheDay.explanation}</p>
           </div>
-        )}
+        </div>
+      )}
     </div>
   );
 }
