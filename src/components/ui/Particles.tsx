@@ -217,9 +217,51 @@ const Particles: React.FC<ParticlesProps> = ({
     return remapped > 0 ? remapped : 0;
   };
 
+  interface Meteor {
+    x: number;
+    y: number;
+    dx: number;
+    dy: number;
+    size: number;
+    alpha: number;
+    color: string,
+  }
+  
+  const [meteors, setMeteors] = useState<Meteor[]>([]);
+  
+  const initializeMeteor = () => {
+    const newMeteor: Meteor = {
+      x: Math.random() * canvasSize.current.w,
+      y: 0,
+      dx: (Math.random() - 0.5) * 10,
+      dy: Math.random() * 5 + 5,
+      size: Math.random() * 1 + 1,
+      alpha: 1,
+      color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+    };
+    setMeteors((prevMeteors) => [...prevMeteors, newMeteor]);
+  };
+  
+  const updateMeteor = (meteor: Meteor) => {
+    meteor.x += meteor.dx;
+    meteor.y += meteor.dy;
+    meteor.alpha -= 0.01; // Fade out effect
+  };
+  
+  const drawMeteor = (ctx: CanvasRenderingContext2D, meteor: Meteor) => {
+    ctx.beginPath();
+    ctx.arc(meteor.x, meteor.y, meteor.size, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(${meteor.color}, ${meteor.alpha})`;
+    ctx.fill();
+    ctx.closePath();
+  };
+
   const animate = () => {
-    clearContext();
-    circles.current.forEach((circle: Circle, i: number) => {
+    const ctx = canvasRef.current?.getContext("2d") as CanvasRenderingContext2D | null;
+    if (ctx) {
+      ctx.clearRect(0, 0, canvasSize.current.w, canvasSize.current.h);
+    }
+    circles.current.forEach((circle, i) => {
       // Handle the alpha value
       const edge = [
         circle.x + circle.translateX - circle.size, // distance from left edge
@@ -265,8 +307,31 @@ const Particles: React.FC<ParticlesProps> = ({
         // update the circle position
       }
     });
+
+    meteors.forEach((meteor, index) => {
+      updateMeteor(meteor);
+      if (ctx) {
+        drawMeteor(ctx, meteor);
+      }
+      if (meteor.alpha <= 0) {
+        setMeteors((prevMeteors) => prevMeteors.filter((_, i) => i !== index));
+      }
+    });
+  
     window.requestAnimationFrame(animate);
   };
+  
+  useEffect(() => {
+    const meteorInterval = setInterval(() => {
+      initializeMeteor();
+    }, 1000); // Adjust the interval as needed
+
+    return () => clearInterval(meteorInterval);
+  }, []);
+
+  useEffect(() => {
+    animate();
+  }, []);
 
   return (
     <div className={className} ref={canvasContainerRef} aria-hidden="true">
