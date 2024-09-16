@@ -3,6 +3,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getNasaData } from "../api/getNasaData";
 import ImageZoom from "react-image-zooom";
+
 import Spinner from "./ui/Spinner";
 
 function GetImage() {
@@ -31,7 +32,7 @@ function GetImage() {
       <div className="relative z-10 mb-4">
         <DatePicker
           showIcon
-          className={'border mb-4 hover:cursor-pointer'}
+          className="border border-gray-300 bg-white rounded-lg shadow-sm p-2 hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-200 ease-in-out"
           selected={selectedDate}
           onChange={(date) => setSelectedDate(date)}
           dateFormat="yyyy/MM/dd"
@@ -53,21 +54,24 @@ function GetImage() {
             {pictureOfTheDay.media_type === "image" ? (
               <ImageZoom
                 src={pictureOfTheDay.hdurl || pictureOfTheDay.url} 
-                altText={pictureOfTheDay.title}
+                alt={pictureOfTheDay.title}
+                className="w-full h-auto rounded-2xl mb-10"
+                loading="lazy"
               />
             ) : (
-              <div className="relative w-full pb-[56.25%]">
-                <iframe 
-                  src={pictureOfTheDay.url} 
-                  title="NASA APOD Video"
-                  className="absolute inset-0 w-full h-full"
-                  allowFullScreen
-                />
-              </div>
+              <iframe 
+                src={pictureOfTheDay.url} 
+                title="NASA APOD Video"
+                className="absolute inset-0 w-full h-full rounded-2xl"
+                allowFullScreen
+              />
             )}
-            <div className="my-10 mx-auto">
-              <h1 className="mb-6 text-4xl">{pictureOfTheDay.title}</h1>
-              <p className="text-start ">{pictureOfTheDay.explanation}</p>
+            <div className="text-start w-full h-auto p-10 my-10 bg-white/80 text-black transparent-1 rounded-2xl">
+              <h1 className="text-2xl md:text-4xl">{pictureOfTheDay.title}</h1>
+              <span className="font-bold">{pictureOfTheDay.date}</span>
+
+              <p className="my-4 text-lg md:text-2xl">{pictureOfTheDay.explanation}</p>
+              <span className="italic">~{pictureOfTheDay.copyright}</span>
             </div>
           </div>
         )
